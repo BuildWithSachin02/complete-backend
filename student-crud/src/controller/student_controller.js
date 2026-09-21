@@ -138,6 +138,34 @@ const searchById = async (req, res) => {
     }
 }
 
+//pagination
+//n(total number of data) yeh hoga hmre pss
+//count = 10(per page we will display the 10 count of datas)
+//  
+
+const pagination = async (req, res) => {
+    try {
+        const page = Number(req.query.page)
+        const limit = Number(req.query.limit)
+        const start = (page - 1) * limit;
+        const end = start + limit
+        const student = await Student.find() // finde the all students
+        const result = student.slice(start, end)
+        res.json({
+            status: true,
+            message: "data is fetched successfully",
+            student: result
+        })
+    } catch (error) {
+        res.json({
+            status: false,
+            message: "not found that data!",
+            error: error.message,
+            result
+        })
+    }
+}
+
 module.exports = {
     insertStudent,
     displayStudents,
