@@ -157,7 +157,7 @@ const pagination = async (req, res) => {
             student: result
         })
     } catch (error) {
-        res.json({
+        res.status(500).json({
             status: false,
             message: "not found that data!",
             error: error.message,
