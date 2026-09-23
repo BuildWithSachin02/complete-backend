@@ -148,7 +148,7 @@ const pagination = async (req, res) => {
         const page = Number(req.query.page)
         const limit = Number(req.query.limit)
         const start = (page - 1) * limit;
-        const end = start + limit
+        const end = (start * limit) - 1
         const student = await Student.find() // finde the all students
         const result = student.slice(start, end)
         res.json({

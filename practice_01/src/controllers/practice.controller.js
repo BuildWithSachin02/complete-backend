@@ -1,7 +1,6 @@
 const express = require('express')
 const practiceModel = require('../models/practice.model.js')
-const app = express()
-app.use(express.json())
+
 
 
 async function practiceGet(req, res) {
@@ -21,9 +20,10 @@ async function practiceGet(req, res) {
     }
 }
 
-async function practicePost() {
+async function practicePost(req,res) {
     try {
-        const result = await practiceModel.create()
+        const practice = req.body
+        const result = await practiceModel.create(practice)
         res.status(201).json({
             status: true,
             message: 'data is created successfully',
@@ -38,7 +38,7 @@ async function practicePost() {
     }
 }
 
-async function practiceUpdate() {
+async function practiceUpdate(req,res) {
     try {
         const id = req.params.id
         const practice = req.body
@@ -57,9 +57,9 @@ async function practiceUpdate() {
     }
 }
 
-async function practiceDelete() {
+async function practiceDelete(req,res) {
     try {
-        const id = req.body.id
+        const id = req.params.id
         const result = await practiceModel.findByIdAndDelete(id)
         res.status(201).json({
             status: true,
@@ -81,13 +81,13 @@ async function practiceDelete() {
 //total data 50
 //start = (page- 1)*count => (5-1)*5=> 20  
 //end = (page * count) - 1 => (5*5)-1 => 24
-async function pagination() {
+async function pagination(req,res) {
     try {
-        const page = Number(req.body.page)
-        const count = Number(req.body.count)
+        const page = Number(req.query.page)
+        const count = Number(req.query.count)
         const start = (page - 1) * count;
-        const end = (page * count) - 1;
-        const result = await practiceModel.slice(start, end)
+        // const end = (page * count) - 1;
+        const result = await practiceModel.find().skip(start).limit(count)
         res.status(200).json({
             status: true,
             message: "founded",
@@ -97,11 +97,11 @@ async function pagination() {
         res.status(501).json({
             status: false,
             message: 'something is wrong',
-            result
+            err:err.message
         })
     }
 }
 
-module.export = {
+module.exports = {
     pagination, practiceDelete, practicePost, practiceUpdate, practiceGet
 }
