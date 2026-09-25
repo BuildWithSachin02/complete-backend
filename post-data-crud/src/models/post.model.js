@@ -5,7 +5,7 @@ const postSchema = new mongoose.Schema({
         type:String,
         require:true
     },
-    description:{
+    caption:{
         type:String,
         require:true
     }
