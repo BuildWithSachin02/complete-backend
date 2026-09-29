@@ -10,4 +10,5 @@ async function dbConnection(){
         console.log('database is not connected ❌')
     }
 }
+
 module.exports = dbConnection

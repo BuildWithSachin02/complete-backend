@@ -10,5 +10,6 @@ app.get('/',async(req,res)=>{
         console.log('error found', err.message)
     }
 })
+// app.get('/get')
 
 module.exports = app
