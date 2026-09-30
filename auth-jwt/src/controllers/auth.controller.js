@@ -1,7 +1,6 @@
-const { sign } = require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 const authModel = require('../models/auth.models.js')
 const bcrypt = require('bcrypt')
-
 
 async function signUp(req, res) {
     try {
@@ -32,12 +31,15 @@ async function signIn(req, res) {
         if (user) {
             const isMatch = await bcrypt.compare(password, user.password)//compare function jo return me true aur false return krta h
             if (isMatch) {
-                res.status(200).json({ status: true, message: 'signin sucessfully' })
+                const token = jwt.sign({ name: user.name, email: user.email }, "!@#$%^&*()_+|}{[,.?>><", {
+                    expiresIn: '1h'
+                })
+                res.status(200).json({ status: true, message: 'signin sucessfully', user, token })
             } else {
                 res.json({ status: false, message: 'signin failed password is incorrect' })
             }
         } else {
-            res.json({ status: true, message: 'signin failed not exits register first' })
+            res.json({ status: false, message: 'signin failed not exits register first' })
         }
         res.status(200).json({
             status: true,
@@ -53,4 +55,21 @@ async function signIn(req, res) {
     }
 }
 
-module.exports = { signIn, signUp }
+async function getAllusers(req, res) {
+    try {
+        const result = await authModel.find()
+        res.status(200).json({
+            status: true,
+            message: 'data fetched successfully',
+            result
+        })
+    } catch (err) {
+        res.status(401).json({
+            status: false,
+            message: 'data is not fetched!',
+            err: err.message
+        })
+    }
+}
+
+module.exports = { signIn, signUp , getAllusers }
