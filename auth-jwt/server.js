@@ -2,11 +2,18 @@ const app = require('./src/app.js')
 require('dotenv').config()
 const dbConnection = require('./src/config/db.js')
 const authRoutes = require('./src/routes/auth.routes.js')
+const verifyToken = require('./src/middleware/auth.middleware.js')
 
 dbConnection()
 const PORT = process.env.PORT
 console.log(PORT)
-app.use('/api/auth',authRoutes)
+app.use('/api/auth', authRoutes)
+app.get('/protected', verifyToken, (req, res) => {
+    res.json({
+        status: true,
+        message: 'You are authorized'
+    })
+})
 app.listen(PORT, () => {
     console.log('server is running on port number is ', PORT)
 })
