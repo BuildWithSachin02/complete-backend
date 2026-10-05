@@ -3,7 +3,7 @@ const bookModel = require('../models/books.model.js')
 async function addBooks(req, res) {
     try {
         const book = req.body
-        const result = await bookModel.create({ book })
+        const result = await bookModel.create(book)
         res.status(201).json({
             status: true,
             message: 'book is created',
@@ -57,7 +57,13 @@ async function updateBookById(req, res) {
     try {
         const id = req.query.id
         const book = req.body
-        const result = await bookModel.findByIdAndUpdate(book, id)
+        const result = await bookModel.findByIdAndUpdate(id, book, { new: true, runValidators: true })
+        if (!result) {
+            res.status(400).json({
+                status: false,
+                message: 'book not found!'
+            })
+        }
         res.status(200).json({
             status: true,
             message: 'updated successfully',
@@ -71,3 +77,4 @@ async function updateBookById(req, res) {
         })
     }
 }
+module.exports = { addBooks, getAllBooks, updateBookById, deleteBooksById }

@@ -29,13 +29,13 @@ async function signIn(req, res) {
         const { email, password } = req.body
         const user = await authModel.findOne({ email })
         if (!user) {
-            res.status(401).json({
+            return res.status(401).json({
                 message: 'user does not exits, Register first'
             })
         }
-        const isMatch = bcrypt.compare(password, user.password)
+        const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch) {
-            res.status(401).json({
+            return res.status(401).json({
                 message: 'Password is incorrect!'
             })
         }
@@ -46,7 +46,7 @@ async function signIn(req, res) {
         },
             process.env.SECRETE_KEY,
             {
-                expiresIn: '1m'
+                expiresIn: '1h'
             }
         )
         res.status(200).json({
