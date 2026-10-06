@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken')
 //USER SIGNUP/CONTROLLERS - REGISTER
 async function signUp(req, res) {
     try {
+        console.log("SIGNUP API HIT");
+        console.log("BODY RECEIVED:", req.body);
         const { email, name, password } = req.body
         const hashPassword = await bcrypt.hash(password, 12)
         const result = await authModel.create({ name, email, password: hashPassword })
@@ -15,6 +17,7 @@ async function signUp(req, res) {
             result
         })
     } catch (err) {
+        console.log("SIGNUP ERROR:", err);
         res.status(400).json({
             status: false,
             message: 'user is not created check where is cause!',
