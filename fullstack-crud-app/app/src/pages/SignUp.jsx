@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { singUp } from "../features/auth/auth.Slice";
+import { Link } from "react-router-dom";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ export default function SignUp() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    console.log(formData,'data is coming')
   };
 
   const handleSubmit = async (e) => {
@@ -88,7 +90,7 @@ export default function SignUp() {
 
         <div>
           <p className="mt-2">
-            If you already registered, go to the login page!
+            If you already registered, go to the <Link to='/'>login page!</Link>
           </p>
         </div>
       </div>

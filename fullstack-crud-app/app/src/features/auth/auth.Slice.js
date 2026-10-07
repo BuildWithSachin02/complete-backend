@@ -5,30 +5,45 @@ const initialState = {
     loader: false,
     user: null,
     error: null,
+    token:null
 }
 
 export const singUp = createAsyncThunk(
-  "/api/auth/signup",
-  async (formData) => {
+    "/api/auth/signup",
+    async (formData) => {
 
-    // simple validation
-    if (!formData.name || !formData.email || !formData.password) {
-      throw new Error("All fields are required");
+        // simple validation
+        if (!formData.name || !formData.email || !formData.password) {
+            throw new Error("All fields are required");
+        }
+
+        if (formData.password.length < 8) {
+            throw new Error("Password must be at least 8 characters");
+        }
+
+        // validation pass hone ke baad hi API call
+        const res = await api.post("/api/auth/signup", formData);
+
+        return res.data;
     }
-
-    if (formData.password.length < 8) {
-      throw new Error("Password must be at least 8 characters");
-    }
-
-    // validation pass hone ke baad hi API call
-    const res = await api.post("/api/auth/signup", formData);
-
-    return res.data;
-  }
 );
 
 export const login = createAsyncThunk('auth/login', async (formData) => {
-    const res = await api.get('/api/auth/signin', formData)
+    console.log(formData)
+    if (!formData.email || !formData.password) {
+        throw new Error('All feilds is required!')
+    }
+
+    if ((formData.password.length) < 8) {
+        throw new Error('Password is greater then 8!')
+    }
+
+    const res = await api.get('/api/auth/signin', {
+        params: {
+            email: formData.email,
+            password: formData.password
+        }
+    })
     return res.data
 })
 
@@ -54,6 +69,7 @@ const authSlice = createSlice({
             .addCase(login.fulfilled, (state, action) => {
                 state.loader = false
                 state.user = action.payload
+                localStorage.setItem('token', action.payload.token)
             })
             .addCase(login.rejected, (state, action) => {
                 state.loader = false

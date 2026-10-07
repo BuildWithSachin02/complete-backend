@@ -22,6 +22,11 @@ const bookSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Book category is required'],
         trim: true
+    },
+    bookMessage: {
+        type: String,
+        required: [true, 'book message is required!'],
+        trim: true
     }
 }, {
     timestamps: true

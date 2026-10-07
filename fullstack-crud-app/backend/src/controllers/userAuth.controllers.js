@@ -29,7 +29,8 @@ async function signUp(req, res) {
 //SIGNIN/CONTROLLERS - GET/JWT-TOKENS
 async function signIn(req, res) {
     try {
-        const { email, password } = req.body
+        const { email, password } = req.query
+        console.log(email,password)
         const user = await authModel.findOne({ email })
         if (!user) {
             return res.status(401).json({
@@ -49,7 +50,7 @@ async function signIn(req, res) {
         },
             process.env.SECRETE_KEY,
             {
-                expiresIn: '1h'
+                expiresIn: '24h'
             }
         )
         res.status(200).json({
