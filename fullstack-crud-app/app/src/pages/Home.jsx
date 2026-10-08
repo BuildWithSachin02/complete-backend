@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getBooks, postBooks } from "../features/books/books.Slice";
+import {
+  deleteBooks,
+  getBooks,
+  postBooks,
+  updateBooks,
+} from "../features/books/books.Slice";
 
 export default function Home() {
   const { books, loader, err } = useSelector((state) => state.books);
+  const [editBook, setEditBooks] = useState(null);
   const [formData, setFormdata] = useState({
     bookName: "",
     bookAuthor: "",
@@ -45,22 +51,55 @@ export default function Home() {
     e.preventDefault();
     console.log(formData);
     try {
-      console.log(formData);
-      await dispatch(postBooks(formData)).unwrap();
-      alert("books is added successfully✔️");
+      if (editBook) {
+        //abb editbook naam ke vairable me boh book ka data h jo hme update krna h
+        await dispatch(
+          updateBooks({
+            id: editBook._id, // yeh hum object me pass krna hoga qki asyncThunk ek se jyda data hoo toh usse object me bejna pdta h
+            book: formData, // aur me id ,book ese q bej rha huu qki hmre frontend ke slice mene usse book aur id se naam diya h isliye
+          }),
+        ).unwrap();
+        alert("book is updated successfully");
+        setEditBooks(null);
+      } else {
+        console.log(formData);
+        await dispatch(postBooks(formData)).unwrap();
+        alert("books is added successfully✔️");
+      }
+      setFormdata({
+        bookName: "",
+        bookAuthor: "",
+        bookCategory: "",
+        bookPublishYear: "",
+        bookMessage: "",
+      });
     } catch (err) {
       alert(err.message);
     }
   };
 
   //PUT REQUEST
-  const handleEditBooks = (id)=>{
-    try{
-      
-    }catch(err){
-      console.log(err.message)
+  const handleEditBooks = (book) => {
+    // console.log(book)
+    setEditBooks(book); //abb jab edit icon pe click ho then hum uss null se book ayegaa oth yeh formdata boh value dedega jo hme update krna hoga
+    setFormdata({
+      bookName: book.bookName,
+      bookAuthor: book.bookAuthor,
+      bookCategory: book.bookCategory,
+      bookMessage: book.bookMessage,
+      bookPublishYear: book.bookPublishYear,
+    });
+  };
+
+  //DELETE - REQUEST
+  const handleDeleteBook = async (id) => {
+    try {
+      await dispatch(deleteBooks(id))
+      alert("this book is deleted successfully!");
+    } catch (err) {
+      console.log(err.message);
     }
-  }
+  };
 
   return (
     <div className="container mt-5">
@@ -69,12 +108,12 @@ export default function Home() {
         <>
           <button
             type="button"
-            className="btn btn-primary"
+            className={editBook ? "btn btn-warning" : "btn btn-primary"}
             data-bs-toggle="modal"
             data-bs-target="#exampleModal"
             data-bs-whatever="@getbootstrap"
           >
-            Add Books
+            {editBook ? "Update Book" : "Add Book"}
           </button>
           <div
             className="modal fade"
@@ -211,10 +250,16 @@ export default function Home() {
                       height: "220px",
                       objectFit: "cover",
                     }}
-                    
                   />
                 )}
-                <i onClick={(id)=> handleEditBooks} className="bi bi-calendar2-x"></i>
+                <i
+                  onClick={() => handleEditBooks(book)}
+                  className="bi bi-pencil-square"
+                ></i>
+                <i
+                  onClick={() => handleDeleteBook(book._id)}
+                  className="bi bi-trash3"
+                ></i>
                 <div className="card-body d-flex flex-column">
                   {/* Book Name */}
                   <h5 className="card-title">{book.bookName}</h5>

@@ -59,7 +59,7 @@ async function updateBookById(req, res) {
         const book = req.body
         const result = await bookModel.findByIdAndUpdate(id, book, { new: true, runValidators: true })
         if (!result) {
-            res.status(400).json({
+            return res.status(400).json({
                 status: false,
                 message: 'book not found!'
             })
